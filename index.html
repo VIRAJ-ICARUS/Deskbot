@@ -1,0 +1,1186 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>DeskBot</title>
+
+    <style>
+        html, body {
+            margin: 0;
+            width: 100%;
+            height: 100%;
+            background: transparent;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .bot {
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    background: #20253a;
+    border: 3px solid #5ee7e7fb;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 35px;
+
+    box-shadow: 0 0 25px rgba(94, 231, 231, 0.4);
+
+    opacity: 1;
+
+
+    animation: breathe 3s ease-in-out infinite;
+transition: transform 0.2s ease;
+}
+
+
+ 
+.bot.happy {
+    box-shadow:
+        0 0 35px #5ee7e7,
+        0 0 70px #5ee7e7;
+
+    filter: brightness(1.4);
+}
+
+.bot.happy .eye {
+    height: 12px;
+    
+    border-radius: 20px 20px 5px 5px;
+}
+
+.bot.curious {
+    box-shadow:
+        0 0 30px #5ee7e7,
+        0 0 60px #5ee7e7;
+
+    transform: rotate(-5deg);
+
+}
+
+
+.bot.curious .eye {
+    width: 30px;
+    height: 40px;
+}
+
+@keyframes breathe {
+    0%, 100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
+}
+.bot.sleepy {
+    opacity: 0.7;
+
+    box-shadow:
+        0 0 15px #5ee7e7,
+        0 0 30px #5ee7e7;
+
+    animation: sleepyBob 6s ease-in-out infinite;
+}
+
+@keyframes sleepyBob {
+    0%, 100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(4px);
+    }
+}
+
+@keyframes annoyedShake {
+    0%   { transform: translateX(0); }
+    20%  { transform: translateX(-3px); }
+    40%  { transform: translateX(3px); }
+    60%  { transform: translateX(-2px); }
+    80%  { transform: translateX(2px); }
+    100% { transform: translateX(0); }
+}
+
+.bot.annoyed {
+    animation:
+        breathe 3s ease-in-out infinite,
+        annoyedShake 0.4s ease;
+}
+
+
+.bot.sleepy .eye,
+.bot.enlightened .eye {
+    height: 5px;
+    border-radius: 50%;
+}
+
+        .eye {
+    width: 25px;
+    height: 35px;
+    background: #5ee7e7;
+    border-radius: 50%;
+
+    animation: none;
+
+    transform: translate(
+        var(--eye-x, 0px),
+        var(--eye-y, 0px)
+    );
+    
+
+    transition:
+        transform 0.08s ease-out,
+        width 0.2s ease,
+        height 0.2s ease,
+        border-radius 0.2s ease;
+}
+
+
+.bot.annoyed .eye {
+    width: 28px;
+    height: 18px;
+    background: #5ee7e7;
+
+    border-radius: 0 0 45% 45%;
+
+    clip-path: polygon(
+        0 35%,
+        100% 0,
+        100% 100%,
+        0 50%
+    );
+}
+
+.bot.annoyed .left-eye {
+    transform:
+        translate(var(--eye-x, 0px), var(--eye-y, 0px))
+        rotate(18deg);
+}
+
+.bot.annoyed .right-eye {
+    transform:
+        translate(var(--eye-x, 0px), var(--eye-y, 0px))
+        rotate(-18deg);
+}
+
+.bot.gettingSleepy {
+    opacity: 0.8;
+
+    animation:
+        sleepyBob 3s ease-in-out infinite;
+}
+
+.speech-bubble {
+    position: absolute;
+
+    min-width: 80px;
+    max-width: 180px;
+
+    padding: 10px 14px;
+
+    background: #20253a;
+    border: 2px solid #5ee7e7;
+    border-radius: 15px;
+
+    color: #5ee7e7;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    text-align: center;
+
+    opacity: 0;
+    transform: translateY(-10px);
+
+    transition:
+        opacity 0.2s ease,
+        transform 0.2s ease;
+
+    pointer-events: none;
+
+    z-index: 10;
+
+    /* Keep it above the bot */
+    bottom: calc(50% + 105px);
+    left: 50%;
+    transform: translateX(-50%) translateY(-10px);
+}
+
+.speech-bubble.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+.speech-bubble::after {
+    content: "";
+
+    position: absolute;
+
+    bottom: -8px;
+    left: 50%;
+
+    width: 14px;
+    height: 14px;
+
+    background: #20253a;
+    border-right: 2px solid #5ee7e7;
+    border-bottom: 2px solid #5ee7e7;
+
+    transform: translateX(-50%) rotate(45deg);
+}
+
+@keyframes dizzyWobble {
+    0%   { transform: rotate(0deg) translateX(0); }
+    20%  { transform: rotate(-2deg) translateX(-1px); }
+    40%  { transform: rotate(2deg) translateX(1px); }
+    60%  { transform: rotate(-1.5deg) translateX(-1px); }
+    80%  { transform: rotate(1.5deg) translateX(1px); }
+    100% { transform: rotate(0deg) translateX(0); }
+}
+
+.bot.dizzy {
+    animation:
+        breathe 3s ease-in-out infinite,
+        dizzyWobble 1s ease-in-out infinite;
+}
+
+.bot.dizzy .eye {
+    animation: eyeWobble 0.45s ease-in-out infinite alternate;
+}
+
+.bot.dragCurious .eye {
+    width: 24px;
+    height: 28px;
+    border-radius: 50%;
+    transform:
+        translate(var(--eye-x, 0px), var(--eye-y, 0px));
+}
+
+/* Medium dragging — wobble */
+@keyframes dragWobble {
+    0%   { transform: rotate(0deg) translateX(0); }
+    20%  { transform: rotate(-2deg) translateX(-1px); }
+    40%  { transform: rotate(2deg) translateX(1px); }
+    60%  { transform: rotate(-1.5deg) translateX(-1px); }
+    80%  { transform: rotate(1.5deg) translateX(1px); }
+    100% { transform: rotate(0deg) translateX(0); }
+}
+
+.bot.dragWobble {
+    animation:
+        breathe 3s ease-in-out infinite,
+        dragWobble 1s ease-in-out infinite;
+}
+
+.bot.dragWobble .eye {
+    width: 24px;
+    height: 28px;
+    border-radius: 50%;
+    animation: eyeWobble 0.45s ease-in-out infinite alternate;
+}
+
+/* FAST DRAG — > < EYES */
+
+.bot.dragDizzy .eye {
+    width: 28px;
+    height: 28px;
+
+    background: transparent;
+    border: none;
+    border-radius: 0;
+
+    animation: none;
+    transform: none;
+
+    position: relative;
+}
+
+/* Common chevron strokes */
+.bot.dragDizzy .eye::before,
+.bot.dragDizzy .eye::after {
+    content: "";
+    position: absolute;
+
+    width: 18px;
+    height: 5px;
+
+    background: #5ee7e7;
+    border-radius: 3px;
+
+    left: 5px;
+    top: 11px;
+
+    transform-origin: center;
+}
+
+/* LEFT EYE = > */
+
+.bot.dragDizzy .left-eye::before {
+    transform: rotate(30deg);
+}
+
+.bot.dragDizzy .left-eye::after {
+    transform: rotate(-30deg);
+}
+
+/* RIGHT EYE = < */
+
+.bot.dragDizzy .right-eye::before {
+    transform: rotate(-30deg);
+}
+
+.bot.dragDizzy .right-eye::after {
+    transform: rotate(30deg);
+}
+
+@keyframes eyeWobble {
+    from {
+        transform:
+            translate(var(--eye-x, 0px), var(--eye-y, 0px))
+            rotate(-8deg);
+    }
+
+    to {
+        transform:
+            translate(var(--eye-x, 0px), var(--eye-y, 0px))
+            rotate(8deg);
+    }
+}
+
+.bot:not(.dragDizzy) .eye {
+    animation: blink 4s infinite;
+}
+
+.bot.dragDizzy .eye {
+    animation: none;
+}
+
+/* Waking up — sleepy little wobble */
+@keyframes wakeWobble {
+    0%   { transform: rotate(0deg) translateX(0); }
+    20%  { transform: rotate(-1deg) translateX(-0.5px); }
+    40%  { transform: rotate(1deg) translateX(1px); }
+    60%  { transform: rotate(-0.6deg) translateX(-0.5px); }
+    80%  { transform: rotate(0.6deg) translateX(0.5px); }
+    100% { transform: rotate(0deg) translateX(0); }
+}
+
+.bot.wakeWobble {
+    animation:
+        breathe 3s ease-in-out infinite,
+        wakeWobble 0.6s ease-in-out;
+}
+
+@keyframes idleFidget {
+    0% {
+        transform: scale(1);
+    }
+
+    35% {
+        transform: scale(1.025, 0.98);
+    }
+
+    65% {
+        transform: scale(0.99, 1.015);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+.bot.idleFidget {
+    animation: idleFidget 0.45s ease-in-out;
+}
+
+@keyframes doubleBlink {
+    0%, 18%, 100% {
+        transform: scaleY(1.5);
+    }
+
+    10% {
+        transform: scaleY(0.15);
+    }
+
+    28% {
+        transform: scaleY(1.5);
+    }
+
+    38% {
+        transform: scaleY(0.15);
+    }
+
+    48% {
+        transform: scaleY(1.5);
+    }
+}
+
+.bot.doubleBlink .eye {
+    animation: doubleBlink 0.8s ease-in-out;
+}
+
+.bot.idleStare {
+    transform: scale(1.015);
+}
+
+
+@keyframes blink {
+    0%, 45%, 55%, 100% {
+        scale: 1 1;
+    }
+
+    50% {
+        scale: 1 0.1;
+    }
+}
+
+@keyframes idleGlance {
+    0% {
+        transform: translate(0, 0);
+    }
+
+    20% {
+        transform: translate(var(--glance-x), var(--glance-y));
+    }
+
+    75% {
+        transform: translate(var(--glance-x), var(--glance-y));
+    }
+
+    100% {
+        transform: translate(0, 0);
+    }
+}
+
+.bot.idleGlance .eye {
+    animation: idleGlance 1.2s ease-in-out forwards;
+}
+
+.bot.enlightened {
+    opacity: 0.7;
+
+    animation:
+        breathe 3s ease-in-out infinite,
+        goldenGlow 2s ease-in-out infinite;
+}
+
+@keyframes goldenGlow {
+    0%, 100% {
+        filter: drop-shadow(0 0 8px gold);
+    }
+
+    50% {
+        filter: drop-shadow(0 0 22px gold);
+    }
+}
+
+    </style>
+</head>
+
+<body>
+
+    <div class="speech-bubble" id="speechBubble"></div>
+ 
+    <div class="bot" id="bot">
+    <div class="eye left-eye"></div>
+    <div class="eye right-eye"></div>
+
+</div>
+
+<script>
+    let emotion = "idle";
+    let clickCount = 0;
+    
+    let lastClickTime = 0;
+
+function setEmotion(newEmotion) {
+    emotion = newEmotion;
+
+    bot.classList.remove(
+        "happy",
+        "curious",
+        "sleepy",
+        "annoyed",
+        "dizzy",
+        "dragCurious",
+        "dragWobble",
+        "dragDizzy",
+        "wakeWobble",
+        "enlightened",
+    );
+
+    if (emotion !== "idle") {
+        bot.classList.add(emotion);
+    }
+}
+    const bot = document.getElementById("bot");
+
+    let dragging = false;
+    let moved = false;
+    let dragDialogueShown = false;
+
+    let startMouseX = 0;
+    let startMouseY = 0;
+
+    let startWindowX = 0;
+    let startWindowY = 0;
+
+    let lastDragX = 0;
+    let lastDragY = 0;
+    let lastDragTime = 0;
+    let dragSpeed = 0;
+    
+    let circleCount = 0;
+    let circleAngle = 0;
+    let lastCircleAngle = null;
+    let circleCooldown = false;
+
+    let lastMouseX = null;
+    let lastMouseY = null;
+
+
+
+    bot.addEventListener("mousedown", (event) => {
+    dragging = true;
+    moved = false;
+    dragDialogueShown = false;
+
+        startMouseX = event.screenX;
+        startMouseY = event.screenY;
+
+            lastDragX = event.screenX;
+            lastDragY = event.screenY;
+            lastDragTime = performance.now();
+            dragSpeed = 0;
+
+        // Electron doesn't expose the window position directly
+        // to the webpage, so we'll track it ourselves.
+        window.deskbotStartX = window.screenX;
+        window.deskbotStartY = window.screenY;
+    });
+
+    document.addEventListener("mousemove", (event) => {
+        if (!dragging) return;
+
+        const dx = event.screenX - startMouseX;
+        const dy = event.screenY - startMouseY;
+
+        //speed tracking
+            const now = performance.now();
+
+    const speedX = event.screenX - lastDragX;
+    const speedY = event.screenY - lastDragY;
+
+    const distance = Math.sqrt(
+        speedX * speedX +
+        speedY * speedY
+    );
+
+    const time = now - lastDragTime;
+
+    if (time > 0) {
+        dragSpeed = distance / time;
+    }
+
+    lastDragX = event.screenX;
+    lastDragY = event.screenY;
+    lastDragTime = now;
+
+    if (Math.abs(dx) > 5 || Math.abs(dy) > 5) {
+    moved = true;
+
+    if (dragSpeed < 0.25) {
+
+    setEmotion("dragCurious");
+
+    if (!dragDialogueShown) {
+        respond("dragSlow");
+        dragDialogueShown = true;
+    }
+
+} else if (dragSpeed < 0.8) {
+
+    setEmotion("dragWobble");
+
+    if (!dragDialogueShown) {
+        respond("dragMedium");
+        dragDialogueShown = true;
+    }
+
+} else {
+
+    setEmotion("dragDizzy");
+
+    if (!dragDialogueShown) {
+        respond("dragFast");
+        dragDialogueShown = true;
+    }
+}
+
+    window.deskbot.moveWindow(
+        window.deskbotStartX + dx,
+        window.deskbotStartY + dy
+    );
+}
+
+        if (Math.abs(dx) > 5 || Math.abs(dy) > 5) {
+            moved = true;
+
+             // DeskBot realizes he's being dragged
+           if (emotion !== "dizzy") {
+           setEmotion("dizzy");
+    }
+
+            window.deskbot.moveWindow(
+                window.deskbotStartX + dx,
+                window.deskbotStartY + dy
+            );
+        }
+    });
+
+    document.addEventListener("mouseup", () => {
+        if (!dragging) return;
+
+        if (!moved) {
+
+    const now = Date.now();
+
+    // Reset click count if it's been a while
+    if (now - lastClickTime > 5000) {
+        clickCount = 0;
+    }
+
+    clickCount++;
+    lastClickTime = now;
+
+    // Choose reaction based on click count
+   if (clickCount === 1) {
+
+    setEmotion("happy");
+    respond("click");
+
+} else if (clickCount === 2) {
+
+    setEmotion("happy");
+    respond("clickSecond");
+
+} else if (clickCount === 3) {
+
+    setEmotion("idle");
+    respond("clickThird");
+
+} else {
+
+    setEmotion("annoyed");
+    respond("annoyed"),100;
+}
+
+
+    // Return to idle after the reaction
+    setTimeout(() => {
+
+        setEmotion("idle");
+
+        // Restart the curiosity countdown
+        startCuriousTimer();
+
+
+    }, 3000);
+}
+
+        if (moved) {
+
+    // Stop the drag reaction
+    setEmotion("idle");
+
+    // React to how fast he was dragged
+    if (dragSpeed < 0.25) {
+        respond("postDragSlow"),100;
+    } else if (dragSpeed < 0.8) {
+        respond("postDragMedium"),100;
+    } else {
+        respond("postDragFast"),100;
+    }
+
+    // Restart the normal curiosity cycle
+    startCuriousTimer();
+}
+
+dragging = false;
+    });
+
+let idleTimer;
+let curiousTimer;
+
+let sleepTimer;
+let isSleeping = false;
+let fallingAsleepTimer;
+
+function startCuriousTimer() {
+    clearTimeout(idleTimer);
+    clearTimeout(curiousTimer);
+
+    idleTimer = setTimeout(() => {
+
+        setEmotion("curious");
+respond("curious"),100;
+
+        curiousTimer = setTimeout(() => {
+            setEmotion("idle");
+        }, 3000);
+
+    }, 10000);
+}
+
+
+function resetSleepTimer() {
+    clearTimeout(sleepTimer);
+    clearTimeout(fallingAsleepTimer);
+
+    // Mouse moved → wake up
+    if (isSleeping) {
+
+    isSleeping = false;
+    eyesSleeping = false;
+
+    setTimeout(() => {
+
+    setEmotion("wakeWobble");
+
+    setTimeout(() => {
+        setEmotion("idle");
+        bot.style.opacity = "1";
+        respond("wake");
+    }, 600);
+
+}, 900);
+}
+
+    // Start counting until mouse stops
+   sleepTimer = setTimeout(() => {
+
+    // Begin falling asleep
+    setEmotion("gettingSleepy");
+
+    fallingAsleepTimer = setTimeout(() => {
+
+        // Make sure the user stayed still
+        if (isSleeping) return;
+
+        isSleeping = true;
+        eyesSleeping = true;
+
+        setEmotion("sleepy");
+        say("zzz...");
+
+    }, 3000);
+
+}, 15000);
+}
+
+window.deskbot.onGlobalMouseMove(() => {
+    resetSleepTimer();
+});
+
+let mouseX = 0;
+let mouseY = 0;
+let eyesSleeping = false;
+
+window.deskbot.onGlobalMouseMove((point) => {
+
+    mouseX = point.x;
+    mouseY = point.y;
+
+    detectLargeCircle();
+
+    lastMouseX = mouseX;
+    lastMouseY = mouseY;
+
+    resetSleepTimer();
+});
+
+function detectLargeCircle() {
+
+    if (lastMouseX === null || lastMouseY === null) return;
+
+    // Echo's center on the desktop
+    const botRect = bot.getBoundingClientRect();
+
+    const centerX =
+        window.screenX +
+        botRect.left +
+        botRect.width / 2;
+
+    const centerY =
+        window.screenY +
+        botRect.top +
+        botRect.height / 2;
+
+    // Cursor position relative to Echo
+    const dx = mouseX - centerX;
+    const dy = mouseY - centerY;
+
+    // Distance from Echo
+    const radius = Math.sqrt(dx * dx + dy * dy);
+
+    // Ignore small circles / normal cursor movement
+    if (radius < 200) {
+        lastCircleAngle = null;
+        circleAngle = 0;
+        circleCount = 0;
+        return;
+    }
+
+    // Angle of cursor around Echo
+    const angle = Math.atan2(dy, dx);
+
+    if (lastCircleAngle !== null) {
+
+        let delta = angle - lastCircleAngle;
+
+        // Handle crossing from +PI to -PI
+        if (delta > Math.PI) {
+            delta -= Math.PI * 2;
+        }
+
+        if (delta < -Math.PI) {
+            delta += Math.PI * 2;
+        }
+
+        circleAngle += delta;
+
+        // Roughly one complete revolution
+        if (Math.abs(circleAngle) >= Math.PI * 1.7) {
+
+            circleCount++;
+            circleAngle = 0;
+
+            console.log("Large circle:", circleCount);
+
+            // Trigger after 3 large circles
+            if (circleCount >= 2 && !circleCooldown) {
+
+                circleCooldown = true;
+
+                respond("circle");
+
+                // Allow another ritual after 15 seconds
+                setTimeout(() => {
+                    circleCooldown = false;
+                    circleCount = 0;
+                }, 15000);
+            }
+        }
+    }
+
+    lastCircleAngle = angle;
+}
+
+let idleEyesLocked = false;
+
+let currentEyeX = 0;
+let currentEyeY = 0;
+
+function updateEyes() {
+
+    if (idleEyesLocked) {
+        requestAnimationFrame(updateEyes);
+        return;
+    }
+
+    const botRect = bot.getBoundingClientRect();
+
+    const botX = window.screenX + botRect.left + botRect.width / 2;
+    const botY = window.screenY + botRect.top + botRect.height / 2;
+
+    const dx = mouseX - botX;
+    const dy = mouseY - botY;
+
+    const maxEyeX = 12;
+    const maxEyeY = 8;
+
+    const trackingDistance = 600;
+
+    let targetX = (dx / trackingDistance) * maxEyeX;
+    let targetY = (dy / trackingDistance) * maxEyeY;
+
+    if (eyesSleeping) {
+        targetX = 0;
+        targetY = 0;
+    }
+
+    // Clamp the movement
+    targetX = Math.max(-maxEyeX, Math.min(maxEyeX, targetX));
+    targetY = Math.max(-maxEyeY, Math.min(maxEyeY, targetY));
+
+    // Smooth movement
+    currentEyeX += (targetX - currentEyeX) * 0.15;
+    currentEyeY += (targetY - currentEyeY) * 0.15;
+
+    const eyes = document.querySelectorAll(".eye");
+
+    eyes.forEach((eye) => {
+        eye.style.setProperty("--eye-x", `${currentEyeX}px`);
+        eye.style.setProperty("--eye-y", `${currentEyeY}px`);
+    });
+
+    requestAnimationFrame(updateEyes);
+}
+
+setTimeout(() => {
+    updateEyes();
+}, 300);
+
+const speechBubble = document.getElementById("speechBubble");
+
+function say(text, duration = 2500) {
+    speechBubble.textContent = text;
+
+    speechBubble.classList.add("show");
+
+    setTimeout(() => {
+        speechBubble.classList.remove("show");
+    }, duration);
+}
+function respond(context) {
+
+    const responses = {
+
+        click: [
+            "yo! 👋",
+            "yes?",
+            "helloo",
+            "what's up?",
+            "hello there!",
+        ],
+
+        dragSlow: [
+            "oh?",
+            "where are we going?",
+
+        ],
+        
+
+        dragMedium: [
+            "whoa...",
+            "hey, careful!",
+            "watch it!",
+            "I wasn't ready for that.",
+        ],
+
+        dragFast: [
+            "WHOA!",
+            "SLOW DOWN!",
+            "TOO FAST!",
+            "DUDE!",
+        ],
+
+
+        annoyed: [
+            "seriously?",
+            "STOP BOOPING ME 😠",
+            "im not a stress ball.",
+            "please stop.",
+            "why.",
+        ],
+
+
+
+        clickSecond: [
+           "again?",
+           "yes?",
+           "what?",
+           "twice?",
+           "hello... again."
+        ],
+
+        clickThird: [
+        "you need something?",
+        "its too much now.",
+        "tf you doin",
+        "bruuh",
+        "you really like clicking me huh?",
+        ],
+
+        postDragSlow: [
+        "okay...",
+        "where did you put me?",
+        "guess I'm here now.",
+        "that was a journey.",
+        ],
+
+        postDragMedium: [
+        "whoa...",
+        "okay, okay.",
+        "I'm fine.",
+        "I survived."
+
+        ],
+
+        postDragFast: [
+        "HEY!",
+        "seriously?!",
+        "I did NOT like that.",
+        "never do that again.",
+        ],
+
+        wake: [
+       "oh... hey.",
+       "I'm awake.",
+       "huh... you're back.",
+       "ugh... was I sleeping.",
+       "uh yeah, i am here!",
+       "did I fall asleep?",
+        "morning... or whatever time it is.",
+       ],
+
+       curious: [
+    "coool",
+    "what's that?",
+    "ohhh?",
+    "interesting...",
+    "whatchu doin?",
+    "what are you looking at?",
+    
+],
+
+         
+     circle: [
+    "congrats, you made two circles!",
+    "what do you want?",
+    "are you summoning me?",
+    "my name? its ECHO",
+    "my name? its ECHO",
+    "my name? its ECHO",
+    "my name? its ECHO",
+    "this is fun, do it again!",
+    "you're doing that on purpose, aren't you?",
+],
+
+
+    };
+
+    const options = responses[context];
+
+    if (!options) return;
+
+    const message =
+        options[Math.floor(Math.random() * options.length)];
+
+    say(message);
+}
+
+
+function idleGlance() {
+
+    if (emotion !== "idle") return;
+
+    const directions = [
+    { x: -12, y: 0 },  // left
+    { x: 12, y: 0 },   // right
+    { x: 0, y: -8 },   // up
+    { x: 0, y: 8 }     // down
+];
+
+    const direction =
+        directions[Math.floor(Math.random() * directions.length)];
+
+    bot.style.setProperty("--glance-x", `${direction.x}px`);
+    bot.style.setProperty("--glance-y", `${direction.y}px`);
+
+    bot.classList.add("idleGlance");
+
+    setTimeout(() => {
+        bot.classList.remove("idleGlance");
+    }, 1200);
+}
+
+setInterval(() => {
+
+    if (emotion === "idle" && Math.random() < 0.4) {
+        idleGlance();
+    }
+
+}, 5000);
+
+resetSleepTimer();
+
+function idleFidget(){
+    
+    if (emotion !== "idle") return;
+    if (dragging) return;
+
+    idleEyesLocked = true;
+
+    bot.classList.add("idleFidget");
+
+    setTimeout(() => {
+        bot.classList.remove("idleFidget");
+        setTimeout(() => {
+    idleEyesLocked = false;
+}, 2000);
+    }, 450);
+}
+
+setInterval(() => {
+
+    if (emotion !== "idle" || dragging) return;
+
+    const roll = Math.random();
+
+    if (roll < 0.10) {
+        idleFidget();
+    }
+
+}, 12000);
+
+
+function doubleBlink() {
+    if (emotion !== "idle") return;
+    if (dragging) return;
+
+    bot.classList.add("doubleBlink");
+
+    setTimeout(() => {
+        bot.classList.remove("doubleBlink");
+    }, 800);
+}
+
+setInterval(() => {
+
+    if (emotion !== "idle" || dragging) return;
+
+    if (Math.random() < 0.08) {
+        doubleBlink();
+    }
+
+}, 15000);
+
+
+function idleStare() {
+    if (emotion !== "idle") return;
+    if (dragging) return;
+
+    bot.classList.add("idleStare");
+
+    setTimeout(() => {
+        bot.classList.remove("idleStare");
+    }, 1600);
+}
+
+setInterval(() => {
+
+    if (emotion !== "idle" || dragging) return;
+
+    if (Math.random() < 0.05) {
+        idleStare();
+    }
+
+}, 20000);
+</script>
+</body>
+</html>
