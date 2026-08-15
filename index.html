@@ -38,7 +38,6 @@
 transition: transform 0.2s ease;
 }
 
-
  
 .bot.happy {
     box-shadow:
@@ -511,7 +510,18 @@ function setEmotion(newEmotion) {
         "dragDizzy",
         "wakeWobble",
         "enlightened",
+        "gettingSleepy",
     );
+
+    bot.style.opacity = "1";
+
+    if (emotion === "gettingSleepy") {
+        bot.style.opacity = "0.8";
+    }
+
+    if (emotion === "sleepy") {
+        bot.style.opacity = "0.7";
+    }
 
     if (emotion !== "idle") {
         bot.classList.add(emotion);
@@ -543,8 +553,32 @@ function setEmotion(newEmotion) {
     let lastMouseY = null;
 
 
+   function startupWake() {
+    isSleeping = true;
+    eyesSleeping = true;
+
+    setEmotion("sleepy");
+    say("zzz...", 4000);
+
+    setTimeout(() => {
+        isSleeping = false;
+        eyesSleeping = false;
+
+        setEmotion("wakeWobble");
+
+        setTimeout(() => {
+            setEmotion("idle");
+            bot.style.opacity = "1";
+            respond("wake");
+            startCuriousTimer();
+
+            isStartingUp = false;
+        }, 600);
+    }, 10000);
+}
 
     bot.addEventListener("mousedown", (event) => {
+         if (isStartingUp) return;
     dragging = true;
     moved = false;
     dragDialogueShown = false;
@@ -564,6 +598,7 @@ function setEmotion(newEmotion) {
     });
 
     document.addEventListener("mousemove", (event) => {
+        if (isStartingUp) return;
         if (!dragging) return;
 
         const dx = event.screenX - startMouseX;
@@ -643,6 +678,7 @@ function setEmotion(newEmotion) {
     });
 
     document.addEventListener("mouseup", () => {
+        if (isStartingUp) return;
         if (!dragging) return;
 
         if (!moved) {
@@ -718,6 +754,7 @@ let curiousTimer;
 
 let sleepTimer;
 let isSleeping = false;
+let isStartingUp = true;
 let fallingAsleepTimer;
 
 function startCuriousTimer() {
@@ -738,6 +775,9 @@ respond("curious"),100;
 
 
 function resetSleepTimer() {
+
+    if (isStartingUp) return;
+
     clearTimeout(sleepTimer);
     clearTimeout(fallingAsleepTimer);
 
@@ -804,6 +844,7 @@ window.deskbot.onGlobalMouseMove((point) => {
 });
 
 function detectLargeCircle() {
+    if (isStartingUp) return;
 
     if (lastMouseX === null || lastMouseY === null) return;
 
@@ -1107,7 +1148,7 @@ setInterval(() => {
 
 }, 5000);
 
-resetSleepTimer();
+startupWake();
 
 function idleFidget(){
     
@@ -1181,6 +1222,7 @@ setInterval(() => {
     }
 
 }, 20000);
+
 </script>
 </body>
 </html>
